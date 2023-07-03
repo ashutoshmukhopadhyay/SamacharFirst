@@ -8,31 +8,37 @@ function reload() {
     window.location.reload();
 }
 
-function bindData(articles) {
-  const cardsContainer = document.getElementById("cards-container");
-  const newsCardTemplate = document.getElementById("template-news-card");
-
-  cardsContainer.innerHTML = "";
-
-  if (articles && Array.isArray(articles)) {
-    articles.forEach((article) => {
-      if (!article.urlToImage) return;
-      const cardClone = newsCardTemplate.content.cloneNode(true);
-      fillDataInCard(cardClone, article);
-      cardsContainer.appendChild(cardClone);
-    });
-  } else {
-    const errorMessage = "No articles found.";
-    console.error(errorMessage);
-    cardsContainer.innerHTML = `<p>${errorMessage}</p>`;
-  }
+async function fetchNews(query) {
+    try {
+      const res = await fetch(`${url}${query}&apiKey=${API_KEY}`);
+      if (!res.ok) {
+        throw new Error('Failed to fetch news.');
+      }
+      const data = await res.json();
+      bindData(data.articles);
+    } catch (error) {
+      console.error(error);
+    }
 }
 
-
-async function fetchNews(query) {
-    const res = await fetch(`${url}${query}&apiKey=${API_KEY}`);
-    const data = await res.json();
-    bindData(data.articles);
+function bindData(articles) {
+    const cardsContainer = document.getElementById("cards-container");
+    const newsCardTemplate = document.getElementById("template-news-card");
+  
+    cardsContainer.innerHTML = "";
+  
+    if (articles && Array.isArray(articles)) {
+      articles.forEach((article) => {
+        if (!article.urlToImage) return;
+        const cardClone = newsCardTemplate.content.cloneNode(true);
+        fillDataInCard(cardClone, article);
+        cardsContainer.appendChild(cardClone);
+      });
+    } else {
+      const errorMessage = "No articles found.";
+      console.error(errorMessage);
+      cardsContainer.innerHTML = `<p>${errorMessage}</p>`;
+    }
 }
 
 function fillDataInCard(cardClone, article) {
