@@ -8,29 +8,31 @@ function reload() {
     window.location.reload();
 }
 
+function bindData(articles) {
+  const cardsContainer = document.getElementById("cards-container");
+  const newsCardTemplate = document.getElementById("template-news-card");
+
+  cardsContainer.innerHTML = "";
+
+  if (articles && articles.length > 0) {
+    articles.forEach((article) => {
+      if (!article.urlToImage) return;
+      const cardClone = newsCardTemplate.content.cloneNode(true);
+      fillDataInCard(cardClone, article);
+      cardsContainer.appendChild(cardClone);
+    });
+  } else {
+    const errorMessage = "No articles found.";
+    console.error(errorMessage);
+    cardsContainer.innerHTML = `<p>${errorMessage}</p>`;
+  }
+}
+
 async function fetchNews(query) {
     const res = await fetch(`${url}${query}&apiKey=${API_KEY}`);
     const data = await res.json();
     bindData(data.articles);
 }
-
-function bindData(articles) {
-    const cardsContainer = document.getElementById("cards-container");
-    const newsCardTemplate = document.getElementById("template-news-card");
-  
-    cardsContainer.innerHTML = "";
-  
-    if (Array.isArray(articles)) {
-      articles.forEach((article) => {
-        if (!article.urlToImage) return;
-        const cardClone = newsCardTemplate.content.cloneNode(true);
-        fillDataInCard(cardClone, article);
-        cardsContainer.appendChild(cardClone);
-      });
-    } else {
-      console.log("No articles found."); // Optional error handling or logging
-    }
-  }
 
 function fillDataInCard(cardClone, article) {
     const newsImg = cardClone.querySelector("#news-img");
