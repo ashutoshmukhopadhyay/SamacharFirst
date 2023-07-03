@@ -14,7 +14,7 @@ function bindData(articles) {
 
   cardsContainer.innerHTML = "";
 
-  if (articles && articles.length > 0) {
+  if (articles && Array.isArray(articles)) {
     articles.forEach((article) => {
       if (!article.urlToImage) return;
       const cardClone = newsCardTemplate.content.cloneNode(true);
@@ -27,6 +27,7 @@ function bindData(articles) {
     cardsContainer.innerHTML = `<p>${errorMessage}</p>`;
   }
 }
+
 
 async function fetchNews(query) {
     const res = await fetch(`${url}${query}&apiKey=${API_KEY}`);
